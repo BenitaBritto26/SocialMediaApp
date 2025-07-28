@@ -17,7 +17,7 @@ import streamlit as st
 # imports json for reading json files
 import json
 # imports the genai library for interacting with Gemini API
-from google import genai
+import google.generativeai as genai
 import os
 import requests
 
