@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>My First Vulnerability Checker</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+   <style>
+       body {
+           font-family: 'Inter', sans-serif;
+           background-color: #f3f4f6;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           min-height: 100vh;
+           padding: 20px;
+       }
+
+           .container {
+           background-color: #ffffff;
+           border-radius: 1rem;
+           box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+           padding: 2.5rem;
+           max-width: 900px;
+           width: 100%;
+       }
+
+       .input-section {
+           display: flex;
+           flex-direction: column;
+           gap: 1.5rem;
+       }
+
+       .file-input-group {
+           display: grid;
+           grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+           gap: 1rem;
+       }
+
+       .file-input-box {
+           border: 2px dashed #d1d5db;
+           border-radius: 0.5rem;
+           padding: 1.5rem;
+           text-align: center;
+           cursor: pointer;
+           transition: all 0.2s ease-in-out;
+       }
+
+       .file-input-box:hover {
+           border-color: #6366f1;
+           background-color: #eef2ff;
+       }
+
+       .file-input-box input[type="file"] {
+           display: none;
+       }
+
+       .score-display {
+           background-color: #e0f2fe;
+           border-radius: 0.75rem;
+           padding: 2rem;
+           text-align: center;
+           margin-top: 2rem;
+           display: none;
+       }
+
+       .score-value {
+           font-size: 3rem;
+           font-weight: bold;
+           color: #1e40af;
+       }
+
+       .score-message {
+           font-size: 1.25rem;
+           color: #374151;
+       }
+
+       .loading-indicator {
+           display: none;
+           text-align: center;
+           margin-top: 1rem;
+           color: #6366f1;
+           font-weight: bold;
+       }
+   </style>
+</head>
+<body class="antialiased">
+   <div class="container">
+       <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-8">
+           Social Media Vulnerability Assessment
+       </h1>
+
+       <p class="text-center text-gray-600 mb-8">
+           Provide your social media information (including any privacy settings mentioned) to get a score out of 100.
+       </p>
+
+       <div class="input-section">
+           <div>
+               <label for="text-input" class="block text-lg font-medium text-gray-700 mb-2">
+                   Paste Social Media Information (e.g., profile text, posts, privacy settings):
+               </label>
+               <textarea id="text-input" rows="8"
+                   class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 text-gray-800"
+                   placeholder="E.g., 'My name is John Doe, I live in New York and love hiking. My birthday is Jan 1, 1990. My profile is set to private.'"></textarea>
+           </div>
+
+           <div>
+               <label class="block text-lg font-medium text-gray-700 mb-2">
+                   Or Upload a File (PDF, Word, or JSON):
+               </label>
+               <div class="file-input-group">
+                   <label for="pdf-upload" class="file-input-box">
+                       <span class="text-indigo-600 text-3xl mb-2 block">📄</span>
+                       <span class="text-gray-700 font-semibold">Upload PDF</span>
+                       <input type="file" id="pdf-upload" accept=".pdf" />                    </label>
+                   <label for="word-upload" class="file-input-box">
+                       <span class="text-indigo-600 text-3xl mb-2 block">📝</span>
+                       <span class="text-gray-700 font-semibold">Upload Word (.docx)</span>
+                       <input type="file" id="word-upload" accept=".doc,.docx"/>
+                   </label>
+                   <label for="json-upload" class="file-input-box">
+                       <span class="text-indigo-600 text-3xl mb-2 block">📊</span>
+                       <span class="text-gray-700 font-semibold">Upload JSON</span>
+                       <input type="file" id="json-upload" accept=".json"/> 
+                   </label>
+               </div>
+           </div>
+
+           <button id="assess-button"
+               class="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+               Assess Vulnerability
+           </button>
+           <div id="loading-indicator" class="loading-indicator">
+               Assessing... Please wait.
+           </div>
+       </div>
+
+       <div id="score-area" class="score-display">
+           <h2 class="text-2xl font-bold text-gray-800 mb-4">Your Vulnerability Score:</h2>
+           <div class="score-value" id="vulnerability-score">--</div> 
+           <p class="score-message" id="score-message">
+               Upload or paste your information and click "Assess" to see your score.
+           </p>
+           <div id="full-report-area" class="mt-4 text-left p-3 bg-white rounded-md border border-gray-200" style="white-space: pre-wrap;">
+                </div>
+       </div>
+   </div>
+
+   <script>
+       document.addEventListener('DOMContentLoaded', function() {
+           var assessButton = document.getElementById('assess-button');
+           var scoreArea = document.getElementById('score-area');
+           var vulnerabilityScoreDisplay = document.getElementById('vulnerability-score');
+           var scoreMessageDisplay = document.getElementById('score-message');
+           var textInput = document.getElementById('text-input');
+           var pdfUpload = document.getElementById('pdf-upload');
+           var wordUpload = document.getElementById('word-upload');
+           var jsonUpload = document.getElementById('json-upload');
+           var loadingIndicator = document.getElementById('loading-indicator');
+           var fullReportArea = document.getElementById('full-report-area'); // New element to display full report
+
+
+           function handleError(userMessage, consoleError) {
+               vulnerabilityScoreDisplay.textContent = 'Error';
+               scoreMessageDisplay.textContent = userMessage;
+               fullReportArea.textContent = ''; // Clear report on error
+               console.error('Frontend Error:', consoleError);
+               loadingIndicator.style.display = 'none';
+               assessButton.disabled = false;
+               scoreArea.style.display = 'block';
+           }
+
+
+           async function sendDataToBackend(formData) {
+               // Set your frontend's backendUrl to point to this route.
+               var backendUrl = '/assess'; // This points to your Flask /assess route
+               // If running locally with Flask on port 5000 and frontend on a different server:
+               // var backendUrl = 'http://localhost:5000/assess'; 
+
+
+               try {
+                    var response = await fetch(backendUrl, {
+                        method: 'POST', // We are sending data, so we use 'POST'
+                        // No 'Content-Type' header needed when sending FormData,
+                        // as the browser sets it automatically with the correct boundary
+                        body: formData  // This 'formData' holds our text or file
+                    });
+            
+                    if (response.ok) {
+                        var data = await response.json(); // Get the score and full report from the response
+                        var score = data.score; 
+                        var fullReport = data.full_report || "No detailed report available."; // Get full report
+                        var message = '';
+            
+                        if (score < 30) {
+                            message = "Great! Your information appears to have low vulnerability. Keep up the good privacy habits!";
+                        } else if (score < 60) {
+                            message = "Moderate vulnerability detected. Consider reviewing your shared information and privacy settings.";
+                        } else {
+                            message = "High vulnerability detected! You might be sharing too much information. Review your privacy settings and shared content carefully to reduce risks.";
+                        }
+            
+                        vulnerabilityScoreDisplay.textContent = score;
+                        scoreMessageDisplay.textContent = message;
+                        fullReportArea.textContent = fullReport; // Display the full AI report
+                    } else {
+                        const errorData = await response.json().catch(() => ({ message: 'No additional error info.' }));
+                        handleError(`Server error (${response.status}): ${errorData.message || response.statusText}`, errorData);
+                    }
+                } catch (error) {
+                    handleError('Network error. Please check your internet connection and try again.', error);
+                } finally {
+                    loadingIndicator.style.display = 'none';
+                    assessButton.disabled = false;
+                    scoreArea.style.display = 'block';
+                }
+           }
+
+           async function performAssessment() {
+               scoreArea.style.display = 'none';
+               loadingIndicator.style.display = 'block';
+               assessButton.disabled = true;
+               fullReportArea.textContent = ''; // Clear previous full report
+
+               var formData = new FormData();
+               var hasInput = false;
+
+
+               if (textInput.value.trim() !== '') {
+                   formData.append('text_data', textInput.value.trim());
+                   hasInput = true;
+               }
+
+
+               var fileToProcess = null;
+               var fileType = null;
+
+
+               if (pdfUpload.files.length > 0) {
+                   fileToProcess = pdfUpload.files[0];
+                   fileType = 'pdf';
+                   hasInput = true;
+               } else if (wordUpload.files.length > 0) {
+                   fileToProcess = wordUpload.files[0];
+                   fileType = 'word';
+                   hasInput = true;
+               } else if (jsonUpload.files.length > 0) {
+                   fileToProcess = jsonUpload.files[0];
+                   fileType = 'json';
+                   hasInput = true;
+               }
+
+
+               if (!hasInput) {
+                   loadingIndicator.style.display = 'none';
+                   assessButton.disabled = false;
+                   scoreArea.style.display = 'block';
+                   vulnerabilityScoreDisplay.textContent = '--';
+                   scoreMessageDisplay.textContent = 'Please provide some information (paste text or upload a file) to assess.';
+                   return;
+               }
+
+
+               if (fileToProcess) {
+                   if (fileType === 'json') {
+                       var reader = new FileReader();
+                       reader.onload = async function(event) {
+                           try {
+                               var jsonContent = JSON.parse(event.target.result);
+                               // Append the JSON content as a string to FormData
+                               formData.append('json_data', JSON.stringify(jsonContent)); 
+                               formData.append('input_type', 'json');
+                               await sendDataToBackend(formData);
+                           } catch (parseError) {
+                               handleError('Invalid JSON file. Please upload a valid JSON file.', parseError);
+                           }
+                       };
+                       reader.onerror = function(error) {
+                           handleError('Error reading the JSON file.', error);
+                       };
+                       reader.readAsText(fileToProcess);
+                   } else {
+                       formData.append('file', fileToProcess);
+                       formData.append('input_type', fileType);
+                       await sendDataToBackend(formData);
+                   }
+               } else {
+                   // If no file was selected, it means the user only used the text input.
+                   formData.append('input_type', 'text'); // Tell the backend it's just text
+                   await sendDataToBackend(formData); // Send it off!
+               }
+           }
+
+
+           assessButton.addEventListener('click', performAssessment);
+
+
+           // Input clearing logic remains the same
+           textInput.addEventListener('input', function() {
+               pdfUpload.value = ''; // Clear PDF input
+               wordUpload.value = ''; // Clear Word input
+               jsonUpload.value = ''; // Clear JSON input
+           });
+
+
+           pdfUpload.addEventListener('change', function() {
+               if (pdfUpload.files.length > 0) { // Check if a file was actually selected
+                   textInput.value = ''; // Clear text input
+                   wordUpload.value = ''; // Clear Word input
+                   jsonUpload.value = ''; // Clear JSON input
+               }
+           });
+
+
+           wordUpload.addEventListener('change', function() {
+               if (wordUpload.files.length > 0) {
+                   textInput.value = '';
+                   pdfUpload.value = '';
+                   jsonUpload.value = '';
+               }
+           });
+
+
+           jsonUpload.addEventListener('change', function() {
+               if (jsonUpload.files.length > 0) {
+                   textInput.value = '';
+                   pdfUpload.value = '';
+                   wordUpload.value = '';
+               }
+           });
+       });
+   </script>
+</body>
+</html>
