@@ -1,28 +1,34 @@
+
+# Import json for reading json files
 import json
-import os
-from flask import Flask, render_template, request, jsonify
-from dotenv import load_dotenv
-# imports the genai library for interacting with Gemini API
+
+# Import the genai library for interacting with Gemini API
 import google.generativeai as genai
 
+# Import flask to integrate the frontend (html)
+from flask import Flask, render_template, request, jsonify
+
+# Import necessary libraries for file handling
+import os # For environment variables
 import io # For handling file data in memory
 import PyPDF2 # For PDF parsing
 from docx import Document # For Word document parsing
 
-# --- Flask App Setup ---
+# Set up the Flask app
 app = Flask(__name__)
 
 # Load environment variables from .env file
+from dotenv import load_dotenv
 load_dotenv("API_KEY.env")
 
-# --- Configure Google Generative AI ---
+# Configure Gemini API client
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
 else:
-    print("WARNING: GEMINI_API_KEY environment variable not set. AI features may not work.")
+    print("GEMINI_API_KEY environment variable not set!")
 
-# --- Helper Functions for File Processing ---
+# File handling functions
 def extract_text_from_pdf(file_stream):
     """Extracts text from a PDF file stream."""
     text = ""
@@ -48,60 +54,42 @@ def extract_text_from_docx(file_stream):
     return text
 
 # --- Gemini Prompt Construction ---
-gemini_base_prompt = """
-    "Analyze my social media profile (attached as a JSON file) and identify any vulnerabilities. Predict any possible breaches to my account based on posting habits, privacy settings, and information shared. ONLY USE THE INFO PRESENT IN THE JSON FILE FOR ANALYSIS.\n"
+prompts = """
+    Analyze my social media profile (attached as a JSON file) and identify any vulnerabilities. Predict any possible breaches to my account based on posting habits, privacy settings, and information shared. ONLY USE THE INFO PRESENT IN THE JSON FILE FOR ANALYSIS.\n
+    
+    I have been using social media and want to understand if I would be at risk for privacy breaches. Based on the advice you give, they want to be able to avoid these breaches. Share the top 3 vulnerabilities - choose ones that put the user at the most risk. Then you can include a couple more (2-3 more) ONLY IF NEEDED. If there aren’t any major risks DO NOT INCLUDE THEM! If there is not three major vulnerabilities, then just share top two or one. If there is no vulnerabilities at all then just say that. \n
 
-   
+    Act as a social media security expert. Write your response as if you are talking to the user directly.
 
-    "I have been using social media and want to understand if I would be at risk for privacy breaches. Based on the advice you give, they want to be able to avoid these breaches. Share the top 3 vulnerabilities - choose ones that put the user at the most risk. Then you can include a couple more (2-3 more) ONLY IF NEEDED. If there aren’t any major risks DO NOT INCLUDE THEM! If there is not three major vulnerabilities, then just share top two or one. If there is no vulnerabilities at all then just say that. \n"
+    Maintain a formal and informative tone and deliver information in a clear and concise way. Include bullet points for each vulnerability/possible breach and explain why it is an issue. After each one provides a possible solution to avoid that breach. Format the bullet points well - avoid the use of asterisk - make it pleasing to the eyes \n
 
-   
+    Scoring Method: Give the user a percentage of how likely I am to have their social media profile breached.\n
 
-    "Act as a social media security expert. Write your response as if you are talking to the user directly."
+    Use this as a reference, but make it more concise, and avoid saying “I have” – make it to the point about what the vulnerabilities are and what needs to change. \n
 
-   
+    After analysis the risk percentage of your profile being breached is (insert the percentage here after looking at the profile)
 
-    "Maintain a formal and informative tone and deliver information in a clear and concise way. Include bullet points for each vulnerability/possible breach and explain why it is an issue. After each one provides a possible solution to avoid that breach. Format the bullet points well - avoid the use of asterisk - make it pleasing to the eyes \n"
+    Here are your top three vulnerabilities:\n
 
-   
+    1.  Insert the top vulnerability here \n
 
-    "Scoring Method: Give the user a percentage of how likely I am to have their social media profile breached.\n"
+        Insert brief explanation of the vulnerability with specific examples\n
 
-   
+        Solution: Insert way to improve – brief 1-2 sentences \n
 
-    "Use this as a reference, but make it more concise, and avoid saying “I have” – make it to the point about what the vulnerabilities are and what needs to change. \n"
+    2.  Insert the top vulnerability here \n
 
- 
+        Insert brief explanation of the vulnerability with specific examples\n
 
-    "After analysis the risk percentage of your profile being breached is (insert the percentage here after looking at the profile)"
+        Solution: Insert way to improve – brief 1-2 sentences \n
 
-    "Here are your top three vulnerabilities:\n"
+    3.  Insert the top vulnerability here \n
 
-    "1.  Insert the top vulnerability here \n"
+        Insert brief explanation of the vulnerability with specific examples\n
 
-    "    Insert brief explanation of the vulnerability with specific examples\n"
+        Solution: Insert way to improve – brief 1-2 sentences \n
 
-   
-
-    "    Solution: Insert way to improve – brief 1-2 sentences \n"
-
-    "2.  Insert the top vulnerability here \n"
-
-    "    Insert brief explanation of the vulnerability with specific examples\n"
-
-   
-
-    "    Solution: Insert way to improve – brief 1-2 sentences \n"
-
-    "3.  Insert the top vulnerability here \n"
-
-    "    Insert brief explanation of the vulnerability with specific examples\n"
-
-   
-
-    "    Solution: Insert way to improve – brief 1-2 sentences \n"
-
-    "Create a bullet for access control insights - are their privacy settings good/bad - what needs to change? Follow a similar format to above but make it more concise and get rid of unneeded spaces/extra lines. Make it clear with as few possible words. DO NOT COPY THE EXAMPLE ABOVE ONLY USE IT TO HAVE A FORMAT"
+    Create a bullet for access control insights - are their privacy settings good/bad - what needs to change? Follow a similar format to above but make it more concise and get rid of unneeded spaces/extra lines. Make it clear with as few possible words. DO NOT COPY THE EXAMPLE ABOVE ONLY USE IT TO HAVE A FORMAT"
     """
 
 # --- Flask Routes ---
