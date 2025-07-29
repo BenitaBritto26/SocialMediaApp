@@ -49,19 +49,60 @@ def extract_text_from_docx(file_stream):
 
 # --- Gemini Prompt Construction ---
 gemini_base_prompt = """
-Between each section, put a dashed line to keep the sections separate.
-Give the user a percent of how unsafe their account is (higher percentage means they are revealing more sensitive data that can be used to exploit the user).
----
-Give a bullet point list of vulnerabilities of this social media profile.
----
-Give a 3-5 sentence summary of possible solutions that could be implemented to resolve said vulnerabilities.
----
-Give suggestions of which users this profile should be accessible to (Eg: family, close friends, mutual friends, public).
----
-Give a 3-5 prediction summary of possible breaches to the account or threats that could result from not making any changes to the current account.
+    "Analyze my social media profile (attached as a JSON file) and identify any vulnerabilities. Predict any possible breaches to my account based on posting habits, privacy settings, and information shared. ONLY USE THE INFO PRESENT IN THE JSON FILE FOR ANALYSIS.\n"
 
-Based on the following social media information, provide the assessment:
-"""
+   
+
+    "I have been using social media and want to understand if I would be at risk for privacy breaches. Based on the advice you give, they want to be able to avoid these breaches. Share the top 3 vulnerabilities - choose ones that put the user at the most risk. Then you can include a couple more (2-3 more) ONLY IF NEEDED. If there aren’t any major risks DO NOT INCLUDE THEM! If there is not three major vulnerabilities, then just share top two or one. If there is no vulnerabilities at all then just say that. \n"
+
+   
+
+    "Act as a social media security expert. Write your response as if you are talking to the user directly."
+
+   
+
+    "Maintain a formal and informative tone and deliver information in a clear and concise way. Include bullet points for each vulnerability/possible breach and explain why it is an issue. After each one provides a possible solution to avoid that breach. Format the bullet points well - avoid the use of asterisk - make it pleasing to the eyes \n"
+
+   
+
+    "Scoring Method: Give the user a percentage of how likely I am to have their social media profile breached.\n"
+
+   
+
+    "Use this as a reference, but make it more concise, and avoid saying “I have” – make it to the point about what the vulnerabilities are and what needs to change. \n"
+
+ 
+
+    "After analysis the risk percentage of your profile being breached is (insert the percentage here after looking at the profile)"
+
+    "Here are your top three vulnerabilities:\n"
+
+    "1.  Insert the top vulnerability here \n"
+
+    "    Insert brief explanation of the vulnerability with specific examples\n"
+
+   
+
+    "    Solution: Insert way to improve – brief 1-2 sentences \n"
+
+    "2.  Insert the top vulnerability here \n"
+
+    "    Insert brief explanation of the vulnerability with specific examples\n"
+
+   
+
+    "    Solution: Insert way to improve – brief 1-2 sentences \n"
+
+    "3.  Insert the top vulnerability here \n"
+
+    "    Insert brief explanation of the vulnerability with specific examples\n"
+
+   
+
+    "    Solution: Insert way to improve – brief 1-2 sentences \n"
+
+    "Create a bullet for access control insights - are their privacy settings good/bad - what needs to change? Follow a similar format to above but make it more concise and get rid of unneeded spaces/extra lines. Make it clear with as few possible words. DO NOT COPY THE EXAMPLE ABOVE ONLY USE IT TO HAVE A FORMAT"
+    """
 
 # --- Flask Routes ---
 
