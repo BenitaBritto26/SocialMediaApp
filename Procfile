@@ -1,1 +1,1 @@
-web: streamlit run Appv2.py --server.port $PORT --server.enableCORS false --server.enableXsrfProtection false
+web: gunicorn Appv3:app --workers 4 --timeout 120
