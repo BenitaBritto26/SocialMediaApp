@@ -1,3 +1,6 @@
-streamlit
-google-generativeai
+Flask
 python-dotenv
+google-generativeai # Or google-genai if you switch to the newer SDK and import style
+PyPDF2
+python-docx
+gunicorn             # Crucial for running Flask in production on Render
