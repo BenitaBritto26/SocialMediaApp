@@ -308,30 +308,40 @@
            });
 
 
+           // Show uploaded file name and checkmark for PDF
            pdfUpload.addEventListener('change', function() {
-               if (pdfUpload.files.length > 0) { // Check if a file was actually selected
-                   textInput.value = ''; // Clear text input
-                   wordUpload.value = ''; // Clear Word input
-                   jsonUpload.value = ''; // Clear JSON input
+               let status = document.getElementById('pdf-upload-status');
+               if (pdfUpload.files.length > 0) {
+                   status.textContent = `Uploaded: ${pdfUpload.files[0].name} ✔️`;
+               } else {
+                   status.textContent = '';
                }
+               document.getElementById('word-upload-status').textContent = '';
+               document.getElementById('json-upload-status').textContent = '';
            });
 
-
+           // Show uploaded file name and checkmark for Word
            wordUpload.addEventListener('change', function() {
+               let status = document.getElementById('word-upload-status');
                if (wordUpload.files.length > 0) {
-                   textInput.value = '';
-                   pdfUpload.value = '';
-                   jsonUpload.value = '';
+                   status.textContent = `Uploaded: ${wordUpload.files[0].name} ✔️`;
+               } else {
+                   status.textContent = '';
                }
+               document.getElementById('pdf-upload-status').textContent = '';
+               document.getElementById('json-upload-status').textContent = '';
            });
 
-
+           // Show uploaded file name and checkmark for JSON
            jsonUpload.addEventListener('change', function() {
+               let status = document.getElementById('json-upload-status');
                if (jsonUpload.files.length > 0) {
-                   textInput.value = '';
-                   pdfUpload.value = '';
-                   wordUpload.value = '';
+                   status.textContent = `Uploaded: ${jsonUpload.files[0].name} ✔️`;
+               } else {
+                   status.textContent = '';
                }
+               document.getElementById('pdf-upload-status').textContent = '';
+               document.getElementById('word-upload-status').textContent = '';
            });
        });
    </script>
