@@ -1,3 +1,8 @@
-streamlit
-google-genai
+#streamlit
+google-generativeai
 python-dotenv
+
+Flask
+PyPDF2 # For PDF parsing
+python-docx # For Word document parsing
+gunicorn # For production deployment on Render
