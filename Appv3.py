@@ -3,7 +3,7 @@ import os
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 # imports the genai library for interacting with Gemini API
-from google import genai
+import google.generativeai as genai
 
 import io # For handling file data in memory
 import PyPDF2 # For PDF parsing
