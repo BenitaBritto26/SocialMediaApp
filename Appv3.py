@@ -126,7 +126,7 @@ def assess():
         return jsonify({"error": "API Key not configured on the server."}), 500
 
     try:
-        model = genai.GenerativeModel('gemini-pro')
+        model = genai.GenerativeModel('gemini-1.5-flash-latest')
         full_gemini_input = f"{gemini_base_prompt}\n\n```\n{data_to_assess}\n```"
         print(f"DEBUG: Calling Gemini API with input length: {len(full_gemini_input)}")
         
