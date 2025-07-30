@@ -63,7 +63,7 @@ gemini_base_prompt = """
 
     "Maintain a formal and informative tone and deliver information in a clear and concise way. Include bullet points for each vulnerability/possible breach and explain why it is an issue. After each one provides a possible solution to avoid that breach. Format the bullet points well - avoid the use of asterisk - make it pleasing to the eyes \n"
 
-    "Scoring Method: Give the user a percentage of how likely I am to have their social media profile breached. Score each vulnerability out of 10 - if you have 5 vulnerabilities than weight each one at 20%, if you have less, then have the same weightage the vulnerabilites you have (20%) and act as if the other vulnerabilities are 0. If you find more than 5 vulnerabilties - make them all equal weight.n"
+    "Scoring Method: Give the user a percentage of how likely I am to have their social media profile breached. Score each vulnerability out of 10, 10 if that vulnerability would be a major reason for a breach, 1 if it does not pose much of a risk for the user- if you have 5 vulnerabilities than weight each one at 20%, if you have less, then have the same weightage the vulnerabilites you have (20%) and act as if the other vulnerabilities are 0. If you find more than 5 vulnerabilties - make them all equal weight.n"
 
     "Use this as a reference, but make it more concise, and avoid saying “I have” – make it to the point about what the vulnerabilities are and what needs to change. \n"
 
