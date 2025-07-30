@@ -73,21 +73,21 @@ gemini_base_prompt = """
 
     "1.  Insert the top vulnerability here \n"
 
-    "    Insert brief explanation of the vulnerability with specific examples\n"
+    "    What this means: Insert brief explanation of the vulnerability with specific examples\n"
    
 
     "    Solution: Insert way to improve – brief 1-2 sentences \n"
 
     "2.  Insert the top vulnerability here \n"
 
-    "    Insert brief explanation of the vulnerability with specific examples\n"
+    "    What this means: Insert brief explanation of the vulnerability with specific examples\n"
 
 
     "    Solution: Insert way to improve – brief 1-2 sentences \n"
 
     "3.  Insert the top vulnerability here \n"
 
-    "    Insert brief explanation of the vulnerability with specific examples\n"
+    "    What this means: Insert brief explanation of the vulnerability with specific examples\n"
 
     "Insert any other vulnerabilities here if needed in the same format, but do not include more than 5 total vulnerabilities. If there are no other vulnerabilities then just say that - DO NOT CREATE VULNERABILITIES THAT DON'T EXIST.\n"
 
