@@ -93,7 +93,7 @@ gemini_base_prompt = """
     "    Solution: Insert way to improve – brief 1-2 sentences \n"
 
     "Create a bullet for access control insights - are their privacy settings good/bad - what needs to change? Follow a similar format to above but make it more concise and get rid of unneeded spaces/extra lines. Make it clear with as few possible words. DO NOT COPY THE EXAMPLE ABOVE ONLY USE IT TO HAVE A FORMAT"
-    "Remove any unnecessary spaces and extra lines in the response. Avoid using * when not needed. \n"
+    "Remove any unnecessary spaces and extra lines in the response. Avoid using *. DO NOT ATTEMPT TO BOLD/ITALICIZE ANYTHING. DONT FORMAT ANYTHING LIKE THIS: **Text** \n"
     """
 
 # Flask Routes and Implementation
