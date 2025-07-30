@@ -63,7 +63,7 @@ gemini_base_prompt = """
 
     "Maintain a formal and informative tone and deliver information in a clear and concise way. Include bullet points for each vulnerability/possible breach and explain why it is an issue. After each one provides a possible solution to avoid that breach. Format the bullet points well - avoid the use of asterisk - make it pleasing to the eyes \n"
 
-    "Scoring Method: Give the user a percentage of how likely I am to have their social media profile breached.\n"
+    "Scoring Method: Give the user a percentage of how likely I am to have their social media profile breached. Score each vulnerability out of 10 - if you have 5 vulnerabilities than weight each one at 20%, if you have less, then have the same weightage the vulnerabilites you have (20%) and act as if the other vulnerabilities are 0. If you find more than 5 vulnerabilties - make them all equal weight.n"
 
     "Use this as a reference, but make it more concise, and avoid saying “I have” – make it to the point about what the vulnerabilities are and what needs to change. \n"
 
@@ -89,11 +89,13 @@ gemini_base_prompt = """
 
     "    Insert brief explanation of the vulnerability with specific examples\n"
 
+    "Insert any other vulnerabilities here if needed in the same format, but do not include more than 5 total vulnerabilities. If there are no other vulnerabilities then just say that - DO NOT CREATE VULNERABILITIES THAT DON'T EXIST.\n"
+
 
     "    Solution: Insert way to improve – brief 1-2 sentences \n"
 
     "Create a bullet for access control insights - are their privacy settings good/bad - what needs to change? Follow a similar format to above but make it more concise and get rid of unneeded spaces/extra lines. Make it clear with as few possible words. DO NOT COPY THE EXAMPLE ABOVE ONLY USE IT TO HAVE A FORMAT"
-    "Remove any unnecessary spaces and extra lines in the response. Avoid using *. DO NOT ATTEMPT TO BOLD/ITALICIZE ANYTHING. DONT FORMAT ANYTHING LIKE THIS: **Text** \n"
+    "Remove any unnecessary spaces and extra lines in the response. Avoid using * - there should be no * in your response. DO NOT ATTEMPT TO BOLD/ITALICIZE ANYTHING. DONT FORMAT ANYTHING LIKE THIS: **Text** \n"
     """
 
 # Flask Routes and Implementation
