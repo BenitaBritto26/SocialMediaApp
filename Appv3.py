@@ -59,11 +59,11 @@ gemini_base_prompt = """
 
     "I have been using social media and want to understand if I would be at risk for privacy breaches. Based on the advice you give, they want to be able to avoid these breaches. Share the top 3 vulnerabilities - choose ones that put the user at the most risk. Then you can include a couple more (2-3 more) ONLY IF NEEDED. If there aren’t any major risks DO NOT INCLUDE THEM! If there is not three major vulnerabilities, then just share top two or one. If there is no vulnerabilities at all then just say that. \n"
 
-    "Act as a social media security expert. Write your response as if you are talking to the user directly."
+    "Act as a social media security expert. Write your response as if you are talking to the user directly. IF THERE ARE NOT THREE MAJOR VULNERABILTIES THEN DO NOT INCLUDE ADDITIONAL ONES. If there are no vulnerabilities at all then just say that. \n"
 
     "Maintain a formal and informative tone and deliver information in a clear and concise way. Include bullet points for each vulnerability/possible breach and explain why it is an issue. After each one provides a possible solution to avoid that breach. Format the bullet points well - avoid the use of asterisk - make it pleasing to the eyes \n"
 
-    "Scoring Method: Give the user a percentage of how likely I am to have their social media profile breached. Score each vulnerability out of 10, 10 if that vulnerability would be a major reason for a breach, 1 if it does not pose much of a risk for the user- if you have 5 vulnerabilities than weight each one at 20%, if you have less, then have the same weightage the vulnerabilites you have (20%) and act as if the other vulnerabilities are 0. If you find more than 5 vulnerabilties - make them all equal weight.n"
+    "Scoring Method: Give the user a percentage of how likely I am to have their social media profile breached. Score each vulnerability out of 10, 10 if that vulnerability would 100 percent result in a breach, 1 if it does not pose much of a risk for the user- if you have 5 vulnerabilities than weight each one at 20%, if you have less, then have the same weightage the vulnerabilites you have (20%) and act as if the other vulnerabilities are 0. If you find more than 5 vulnerabilties - make them all equal weight.n"
 
     "Use this as a reference, but make it more concise, and avoid saying “I have” – make it to the point about what the vulnerabilities are and what needs to change. \n"
 
